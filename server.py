@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify, abort, render_template
 from dotenv import load_dotenv
 import os
 
@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello():
-        return "<h1>Hello, World!</h1>"
+    return render_template("index.html")
 
 @app.route("/osc", methods=['POST'])
 def receiveOSC():
@@ -15,9 +15,9 @@ def receiveOSC():
         key = ""
         if not request.json:
             abort(400)
+            return "Failure"
         else:
-            print(request.json['key'])
-            key = request.json['key'] # send key from OSC server
-            return key
+            key = request.json['key'] # TO DO - send key from OSC server
+            return "Success"
     else:
         return "Error parsing the request"
