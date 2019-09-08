@@ -18,6 +18,8 @@ def receiveOSC():
             return "Failure"
         else:
             key = request.json['key'] # TO DO - send key from OSC server
+            level = request.json['level']
+            print( key, level )
             return "Success"
     else:
         return "Error parsing the request"

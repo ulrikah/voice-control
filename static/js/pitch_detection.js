@@ -42,9 +42,12 @@ function getPitch() {
       select('#result').html(frequency);
       
       const midi = Tone.Frequency(freqToMidi(frequency), 'midi').toMidi()
+    	
+      // We only bother to send a request onChange as of now
       if (midi && prevMidi != midi){
-      	// We only bother to send a request onChange as of now
-        var midiJson = { "key": midi } // TO DO - add velocity from volume
+
+        const micLevel = mic.getLevel() // TO DO - add velocity from volume
+        const midiJson = { "key": midi, "level": micLevel } 
         sendMidiToServer(midiJson);
         prevMidi = midi;
   
