@@ -13,7 +13,7 @@ def hello():
 def receiveOSC():
     if request.method == "POST":
         key = ""
-        if not request.json:
+        if not (request.json and request.json['key'] and request):
             abort(400)
             return "Failure"
         else:
