@@ -1,9 +1,12 @@
 from flask import Flask, request, jsonify, abort, render_template
 from dotenv import load_dotenv
 import os
+from osc_client import Client
 
 load_dotenv()
 app = Flask(__name__)
+client = Client(os.getenv("OSC_IP"), os.getenv("OSC_PORT"))
+print("Setting up client at", client.ip, "and port", client.port)
 
 @app.route("/")
 def hello():
@@ -20,6 +23,7 @@ def receiveOSC():
             key = request.json['key'] # TO DO - send key from OSC server
             level = request.json['level']
             print( key, level )
+            client.send_msg(key)
             return "Success"
     else:
         return "Error parsing the request"

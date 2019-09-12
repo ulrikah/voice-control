@@ -16,6 +16,7 @@ let prevMidi;
 
 function preload() {
 	fmOsc = new Tone.FatOscillator().toMaster();
+  fmOsc.volume.value = -32
 }
 
 function setup() {
