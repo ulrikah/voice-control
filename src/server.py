@@ -22,7 +22,7 @@ def receiveOSC():
         else:
             key = request.json['key'] # TO DO - send key from OSC server
             level = request.json['level']
-            print( key, level )
+            print( "[key", key, "|", "level", round(level, 3), "]")
             client.send_msg(key)
             return "Success"
     else:

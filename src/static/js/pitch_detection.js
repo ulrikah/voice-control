@@ -8,15 +8,19 @@ ml5 Example
 Basic Pitch Detection
 === */
 
+
 let audioContext;
 let mic;
 let pitch;
 let fmOsc;
 let prevMidi;
 
+// threshold of micLevel by trial and error
+const MIC_THRESHOLD = 0.01;
+
 function preload() {
 	fmOsc = new Tone.FatOscillator().toMaster();
-  fmOsc.volume.value = -32
+  fmOsc.volume.value = -40
 }
 
 function setup() {
@@ -33,7 +37,7 @@ function startPitch() {
 function modelLoaded() {
   select('#status').html('Model Loaded');
   getPitch();
-  fmOsc.start()
+  // fmOsc.start()
 }
 
 
@@ -48,12 +52,15 @@ function getPitch() {
       if (midi && prevMidi != midi){
 
         const micLevel = mic.getLevel() // TO DO - add velocity from volume
-        const midiJson = { "key": midi, "level": micLevel } 
-        sendMidiToServer(midiJson);
-        prevMidi = midi;
-  
-        // Set the frequency of the oscillator to the new value
-        fmOsc.frequency.value = midi;
+        if (micLevel >= MIC_THRESHOLD)
+        {        
+          const midiJson = { "key": midi, "level": micLevel } 
+          sendMidiToServer(midiJson);
+          prevMidi = midi;
+    
+          // Set the frequency of the oscillator to the new value
+          fmOsc.frequency.value = midi;
+        }
       }
 
     } else {
