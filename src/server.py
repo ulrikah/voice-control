@@ -23,7 +23,7 @@ def receiveOSC():
             key = request.json['key'] # TO DO - send key from OSC server
             level = request.json['level']
             print( "[key", key, "|", "level", round(level, 3), "]")
-            client.send_msg(key)
+            client.send_msg(key, level)
             return "Success"
     else:
         return "Error parsing the request"

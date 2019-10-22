@@ -15,20 +15,28 @@ from pythonosc import osc_server
 MIDI_PORT = 'UM-ONE' # TO DO: receive from args
 out = mido.open_output(MIDI_PORT)
 
-def receive_osc(unused_addr, args, msg):
-    print("[{0}] ~ {1}".format(args[0], msg))
-    if msg:
-        send_msg(msg)
+def receive_osc(address, args, key, level):
+    print("[{0}] ~ {1} ~ {2}".format(args[0], key, level))
+    vel = round(map_range(level, 0.1, 0.40, 10, 127))
+    if key and vel:
+        send_msg(key, vel)
 
-def send_msg(msg):
-    start = mido.Message('note_on', note=msg)
-    end = mido.Message('note_off', note=msg)
+def send_msg(key, vel):
+    start = mido.Message('note_on', note=key, velocity=vel)
+    end = mido.Message('note_off', note=key, velocity=vel)
     print('Should play a sound')
     out.send(start)
     time.sleep(5)
     print('Should stop the sound')
     out.send(end)
     return
+
+def map_range(x,a,b,c,d, clamp=True):
+    y=(x-a)/(b-a)*(d-c)+c
+    if clamp:
+        if y < c: return c
+        elif y > d: return d
+    return y
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
