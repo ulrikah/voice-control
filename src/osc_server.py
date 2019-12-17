@@ -12,24 +12,40 @@ import time
 from pythonosc import dispatcher
 from pythonosc import osc_server
 
-MIDI_PORT = 'UM-ONE' # TO DO: receive from args
-out = mido.open_output(MIDI_PORT)
+prev_key = ""
 
-def receive_osc(address, args, key, level):
-    print("[{0}] ~ {1} ~ {2}".format(args[0], key, level))
-    vel = round(map_range(level, 0.1, 0.40, 10, 127))
-    if key and vel:
-        send_msg(key, vel)
+MIDI_PORTS = ['UM-ONE', 'IAC-driver virtual'] # TO DO: receive from args, pick the first one enabled from mido
+for port in MIDI_PORTS:
+	try: 
+		out = mido.open_output(port)
+		print(f"Connected to MIDI port {port}")
+		break
+	except IOError:
+		print(f"The MIDI port {port} is not configurable")
 
-def send_msg(key, vel):
-    start = mido.Message('note_on', note=key, velocity=vel)
-    end = mido.Message('note_off', note=key, velocity=vel)
-    print('Should play a sound')
-    out.send(start)
-    time.sleep(5)
-    print('Should stop the sound')
-    out.send(end)
-    return
+if not out:
+	raise IOError("No MIDI interface detected")
+
+
+def receive_osc(address, args, key, level, msg_type):
+    print("[{0}] ~ {1} ~ {2} ~ {3}".format(args[0], key, round(level, 2), msg_type))
+    vel = round(map_range(level, 0.1, 0.40, 20, 127))
+    if key and vel and msg_type:
+        send_msg(key, vel, msg_type)
+
+def send_msg(key, vel, msg_type):
+	'''
+	on = mido.Message("note_on", note=key, velocity=vel)
+	off = mido.Message("note_off", note=key, velocity=vel)
+	print("[START]", key)
+	out.send(on)
+	time.sleep(1)
+	out.send(off)
+	print("[STOP]", key)
+	'''
+	msg = mido.Message(msg_type, note=key, velocity=vel)
+	out.send(msg)
+	return
 
 def map_range(x,a,b,c,d, clamp=True):
     y=(x-a)/(b-a)*(d-c)+c
@@ -47,9 +63,8 @@ if __name__ == "__main__":
   args = parser.parse_args()
 
   dispatcher = dispatcher.Dispatcher()
-  # dispatcher.map("/osc", print)
   dispatcher.map("/osc", receive_osc, "MIDI")
-
+  prev_key = None
   server = osc_server.ThreadingOSCUDPServer(
       (args.ip, args.port), dispatcher)
   print("Serving on {}".format(server.server_address))
