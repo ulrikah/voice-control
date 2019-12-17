@@ -1,5 +1,3 @@
-import time
-
 from pythonosc import udp_client
 
 class Client:
@@ -8,7 +6,6 @@ class Client:
         self.port = int(port)
         self.client = udp_client.SimpleUDPClient(self.ip, self.port)
 
-    def send_msg(self, key, level, channel="/osc"):
-        msg = (key, level)
+    def send_msg(self, key, level, msg_type, channel="/osc"):
+        msg = (key, level, msg_type)
         self.client.send_message(channel, msg)
-        time.sleep(1)
