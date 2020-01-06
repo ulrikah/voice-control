@@ -2,38 +2,26 @@
 <html>
 	<head>
 		<title>Pitch Detector</title>
-		<link href='https://fonts.googleapis.com/css?family=Alike' rel='stylesheet' type='text/css'>
-		<style>
-			body { font: 14pt 'Alike', sans-serif;}
-			#note { font-size: 164px; }
-			.droptarget { background-color: #348781}
-			div.confident { color: black; }
-			div.vague { color: lightgrey; }
-			#note { display: inline-block; height:180px; text-align: left;}
-			
-			#detector { width: 300px; height: 300px; border: 4px solid gray; border-radius: 8px; text-align: center; padding-top: 10px;}
-			#output { width: 300px; height: 42px; }
-			#flat { display: none; }
-			#sharp { display: none; }
-			.flat #flat { display: inline; }
-			.sharp #sharp { display: inline; }
-		</style>
+		<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="/static/css/style.css">
 	</head>
 	<body>
 		<script src="/static/js/pitch_detection.js"></script>
-		<p>
-			<button onclick="toggleLiveInput()">use live input</button>
-		</p>
+		<div class=container>
+			<svg height="200" width="200" class="item toggle">
+				<circle cx="102" cy="102" r="75" stroke="black" stroke-width="1" fill="black" />
+				<circle cx="100" cy="100" r="75" stroke="black" stroke-width="1" fill="#E41D16" />
+			</svg>
 
-		<div id="detector" class="vague">
-			<div class="pitch"><span id="pitch">--</span>Hz</div>
-			<div class="note"><span id="note">--</span></div>   
-			<canvas id="output" width=300 height=42></canvas>
-			<div id="detune"><span id="detune_amt">--</span><span id="flat">cents &#9837;</span><span id="sharp">cents &#9839;</span></div>
-			<div> Gain : <span id="gain">--</span></div>
+			<canvas class="item" id="waveform" width="512" height="256"></canvas>
+			<div class="item" id="detector">
+				<div class="pitch"><span id="pitch">--</span>Hz</div>
+				<div class="note"><span id="note">--</span></div>   
+				<div id="detune"><span id="detune_amt">--</span><span id="flat">cents &#9837;</span><span id="sharp">cents &#9839;</span></div>
+				<div> Gain : <span id="gain">--</span></div>
+			</div>
+
 		</div>
-
-		<canvas id="waveform" width="512" height="256"></canvas>
 
 		<!-- sockets -->
 		<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>

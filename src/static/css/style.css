@@ -1,0 +1,43 @@
+body {
+	font: 28pt 'Roboto', sans-serif;
+	background-color: #F8F5E4;
+}
+
+#note { 
+	font-size: 164px; 
+}
+
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	max-width: 80%;
+	margin: auto;
+}
+
+.item {
+	margin: 3% auto;
+	max-width: 80%; 
+}
+
+#note { 
+	height:180px;
+	text-align: left;
+}
+
+#detector {
+	min-width: 50%;
+	border: 1px solid black;
+  padding: 10px;
+  box-shadow: 10px 10px black;
+	text-align: center; 
+	padding-top: 10px;
+
+	color: #E41D16;
+	text-shadow:
+		3px 3px 0 black,
+		-1px -1px 0 black,  
+		1px -1px 0 black,
+		-1px 1px 0 black,
+		1px 1px 0 black;
+}

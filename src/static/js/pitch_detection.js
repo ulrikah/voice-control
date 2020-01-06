@@ -9,7 +9,6 @@ var analyser = null;
 var theBuffer = null;
 var mediaStreamSource = null;
 var detectorElem, 
-	canvasElem,
 	waveCanvas,
 	pitchElem,
 	noteElem,
@@ -36,10 +35,9 @@ window.onload = function() {
 	analyser.fftSize = 2048;
 	levelMeter = createAudioMeter(audioContext);
 	
-	MAX_SIZE = Math.max(4, Math.floor(audioContext.sampleRate/5000));	// corresponds to a 5kHz signal
+	MAX_SIZE = Math.max(4, Math.floor(audioContext.sampleRate / 5000));	// corresponds to a 5kHz signal
 
 	detectorElem = document.getElementById( "detector" );
-	canvasElem = document.getElementById( "output" );
 	if (DRAW_CANVAS) {
 		waveform = document.getElementById( "waveform" );
 		waveCanvas = waveform.getContext("2d");
@@ -51,6 +49,11 @@ window.onload = function() {
 	detuneElem = document.getElementById( "detune" );
 	gainElem = document.getElementById( "gain" );
 	detuneAmount = document.getElementById( "detune_amt" );
+
+	const toggle = document.querySelector('.toggle');
+	toggle.addEventListener('click', function() {
+		toggleLiveInput();
+	});
 }
 
 function toggleLiveInput() {
@@ -81,6 +84,7 @@ function toggleLiveInput() {
 	  })
 	  .catch((err) => console.log("ERROR", err))
 }
+
 
 var rafID = null;
 var tracks = null;
@@ -201,27 +205,27 @@ function updatePitch() {
 	}
 
  	if (ac == -1) {
- 		detectorElem.className = "vague";
 	 	pitchElem.innerText = "--";
 		noteElem.innerText = "-";
 		detuneElem.className = "";
 		detuneAmount.innerText = "--";
  	} else {
-	 	detectorElem.className = "confident";
 	 	pitch = ac;
 	 	pitchElem.innerText = Math.round( pitch ) ;
 	 	var note =  noteFromPitch( pitch );
 		noteElem.innerHTML = noteStrings[note%12];
 		var detune = centsOffFromPitch( pitch, note );
 		if (detune == 0 ) {
-			detuneElem.className = "";
 			detuneAmount.innerHTML = "--";
 		} else {
 			if (detune < 0)
-				detuneElem.className = "flat";
+			{
+				
+			}
 			else
-				detuneElem.className = "sharp";
-			detuneAmount.innerHTML = Math.abs( detune );
+			{
+				detuneAmount.innerHTML = Math.abs( detune );
+			}
 		}
 	}
 
