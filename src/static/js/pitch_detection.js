@@ -102,10 +102,14 @@ function centsOffFromPitch( frequency, note ) {
 	return Math.floor( 1200 * Math.log( frequency / frequencyFromNoteNumber( note ))/Math.log(2) );
 }
 
+function sendMidiSocket(json, printResponse = false) {
+	socket.emit('midi', json)
+}
+
 function sendMidiHttp(midiJson, printResponse = false) {
   const http = new XMLHttpRequest()
-  const url = "https://192.168.173.238:5000/osc"
-  // const url = "https://localhost:5000/osc" // for testing
+  // const url = "https://192.168.173.238:5000/osc"
+  const url = "https://localhost:5000/osc" // for testing
   http.open("POST", url)
   if (printResponse)
   {
@@ -173,18 +177,21 @@ function updatePitch() {
 		if (note !== prevNote && levelMeter.volume >= threshold)
 		{
 			const midiJson = { key: note, level: Number(levelMeter.volume.toFixed(2)), msg_type: MESSAGE_TYPES.ON };
-			sendMidiHttp(midiJson);
+			// sendMidiHttp(midiJson);
+			sendMidiSocket(midiJson)
 			// send note_off on previous message
 			if (prevNote)
 			{
 				const midiJsonPrev = { key: prevNote, level: Number(levelMeter.volume.toFixed(2)), msg_type: MESSAGE_TYPES.OFF };
-				sendMidiHttp(midiJsonPrev);
+				// sendMidiHttp(midiJsonPrev);
+				sendMidiSocket(midiJsonPrev)
 			}
 		}
 		// case where note is the same, but the input level is lowered
 		else if (note === prevNote && levelMeter.volume < threshold){
 			const midiJson = { key: note, level: Number(levelMeter.volume.toFixed(2)), msg_type: MESSAGE_TYPES.OFF };
-			sendMidiHttp(midiJson);
+			// sendMidiHttp(midiJson);
+			sendMidiSocket(midiJson);
 		}
 		prevNote = note;
 	}
