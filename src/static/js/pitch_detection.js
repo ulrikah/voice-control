@@ -20,7 +20,7 @@ var detectorElem,
 	levelMeter;
 
 var DRAW_CANVAS = true;
-var threshold = 0.1; // threshold of mic input level
+var threshold = 0.00; // threshold of mic input level
 var MESSAGE_TYPES = {
 	ON : "note_on",
 	OFF : "note_off",
@@ -104,8 +104,8 @@ function centsOffFromPitch( frequency, note ) {
 
 function sendMidiHttp(midiJson, printResponse = false) {
   const http = new XMLHttpRequest()
-  const url = "http://localhost:5000/osc" // for testing
-  // const url = "/osc"
+  const url = "https://192.168.173.238:5000/osc"
+  // const url = "https://localhost:5000/osc" // for testing
   http.open("POST", url)
   if (printResponse)
   {
@@ -307,3 +307,11 @@ function volumeAudioProcess( event ) {
     // want "fast attack, slow release."
     this.volume = Math.max(rms, this.volume*this.averaging);
 }
+
+// eruda for having a console on mobile browsers
+;(function () {
+    var src = '//cdn.jsdelivr.net/npm/eruda';
+    if (!/eruda=true/.test(window.location) && localStorage.getItem('active-eruda') != 'true') return;
+    document.write('<scr' + 'ipt src="' + src + '"></scr' + 'ipt>');
+    document.write('<scr' + 'ipt>eruda.init();</scr' + 'ipt>');
+})();

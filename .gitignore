@@ -1,6 +1,7 @@
 # Custom
 .DS_Store
 notes
+*.pem
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
