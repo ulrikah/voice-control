@@ -20,7 +20,7 @@ var detectorElem,
 	levelMeter;
 
 var DRAW_CANVAS = true;
-var threshold = 0.1; // threshold of mic input level
+var threshold = 0.00; // threshold of mic input level
 var MESSAGE_TYPES = {
 	ON : "note_on",
 	OFF : "note_off",
@@ -102,21 +102,8 @@ function centsOffFromPitch( frequency, note ) {
 	return Math.floor( 1200 * Math.log( frequency / frequencyFromNoteNumber( note ))/Math.log(2) );
 }
 
-function sendMidiHttp(midiJson, printResponse = false) {
-  const http = new XMLHttpRequest()
-  const url = "http://localhost:5000/osc" // for testing
-  // const url = "/osc"
-  http.open("POST", url)
-  if (printResponse)
-  {
-    http.onreadystatechange = function() {
-      if (http.readyState == XMLHttpRequest.DONE) {
-        console.log(http.responseText);
-      }
-    }
-  }
-  http.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
-  http.send(JSON.stringify(midiJson))
+function sendMidiSocket(json, printResponse = false) {
+	socket.emit('midi', json)
 }
 
 function autoCorrelate( buf, sampleRate ) {
@@ -173,18 +160,18 @@ function updatePitch() {
 		if (note !== prevNote && levelMeter.volume >= threshold)
 		{
 			const midiJson = { key: note, level: Number(levelMeter.volume.toFixed(2)), msg_type: MESSAGE_TYPES.ON };
-			sendMidiHttp(midiJson);
+			sendMidiSocket(midiJson)
 			// send note_off on previous message
 			if (prevNote)
 			{
 				const midiJsonPrev = { key: prevNote, level: Number(levelMeter.volume.toFixed(2)), msg_type: MESSAGE_TYPES.OFF };
-				sendMidiHttp(midiJsonPrev);
+				sendMidiSocket(midiJsonPrev)
 			}
 		}
 		// case where note is the same, but the input level is lowered
 		else if (note === prevNote && levelMeter.volume < threshold){
 			const midiJson = { key: note, level: Number(levelMeter.volume.toFixed(2)), msg_type: MESSAGE_TYPES.OFF };
-			sendMidiHttp(midiJson);
+			sendMidiSocket(midiJson);
 		}
 		prevNote = note;
 	}
@@ -307,3 +294,11 @@ function volumeAudioProcess( event ) {
     // want "fast attack, slow release."
     this.volume = Math.max(rms, this.volume*this.averaging);
 }
+
+// eruda for having a console on mobile browsers
+;(function () {
+    var src = '//cdn.jsdelivr.net/npm/eruda';
+    if (!/eruda=true/.test(window.location) && localStorage.getItem('active-eruda') != 'true') return;
+    document.write('<scr' + 'ipt src="' + src + '"></scr' + 'ipt>');
+    document.write('<scr' + 'ipt>eruda.init();</scr' + 'ipt>');
+})();
