@@ -106,23 +106,6 @@ function sendMidiSocket(json, printResponse = false) {
 	socket.emit('midi', json)
 }
 
-function sendMidiHttp(midiJson, printResponse = false) {
-  const http = new XMLHttpRequest()
-  // const url = "https://192.168.173.238:5000/osc"
-  const url = "https://localhost:5000/osc" // for testing
-  http.open("POST", url)
-  if (printResponse)
-  {
-    http.onreadystatechange = function() {
-      if (http.readyState == XMLHttpRequest.DONE) {
-        console.log(http.responseText);
-      }
-    }
-  }
-  http.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
-  http.send(JSON.stringify(midiJson))
-}
-
 function autoCorrelate( buf, sampleRate ) {
 	// Implements the ACF2+ algorithm
 	var SIZE = buf.length;
@@ -177,20 +160,17 @@ function updatePitch() {
 		if (note !== prevNote && levelMeter.volume >= threshold)
 		{
 			const midiJson = { key: note, level: Number(levelMeter.volume.toFixed(2)), msg_type: MESSAGE_TYPES.ON };
-			// sendMidiHttp(midiJson);
 			sendMidiSocket(midiJson)
 			// send note_off on previous message
 			if (prevNote)
 			{
 				const midiJsonPrev = { key: prevNote, level: Number(levelMeter.volume.toFixed(2)), msg_type: MESSAGE_TYPES.OFF };
-				// sendMidiHttp(midiJsonPrev);
 				sendMidiSocket(midiJsonPrev)
 			}
 		}
 		// case where note is the same, but the input level is lowered
 		else if (note === prevNote && levelMeter.volume < threshold){
 			const midiJson = { key: note, level: Number(levelMeter.volume.toFixed(2)), msg_type: MESSAGE_TYPES.OFF };
-			// sendMidiHttp(midiJson);
 			sendMidiSocket(midiJson);
 		}
 		prevNote = note;
