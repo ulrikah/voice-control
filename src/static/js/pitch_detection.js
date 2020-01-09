@@ -52,7 +52,10 @@ window.onload = function() {
 
 	const toggle = document.querySelector('.toggle');
 	toggle.addEventListener('click', function() {
-		toggleLiveInput();
+		audioContext.resume().then( () => {
+			console.log("AudioContext resumed");
+			toggleLiveInput();
+		});
 	});
 }
 
@@ -181,25 +184,29 @@ function updatePitch() {
 	}
 
 	if (DRAW_CANVAS) {  // This draws the current waveform, useful for debugging
-		waveCanvas.clearRect(0,0,512,256);
-		waveCanvas.strokeStyle = "red";
+		const w = waveCanvas.canvas.width;
+		const h = waveCanvas.canvas.height;
+		waveCanvas.clearRect(0,0,w,h);
 		waveCanvas.beginPath();
 		waveCanvas.moveTo(0,0);
-		waveCanvas.lineTo(0,256);
-		waveCanvas.moveTo(128,0);
-		waveCanvas.lineTo(128,256);
-		waveCanvas.moveTo(256,0);
-		waveCanvas.lineTo(256,256);
-		waveCanvas.moveTo(384,0);
-		waveCanvas.lineTo(384,256);
-		waveCanvas.moveTo(512,0);
-		waveCanvas.lineTo(512,256);
+		waveCanvas.lineTo(0,h);
+		/*
+		waveCanvas.moveTo(h/2,0);
+		waveCanvas.lineTo(h/2,h);
+		waveCanvas.moveTo(h,0);
+		waveCanvas.lineTo(h,h);
+		waveCanvas.moveTo(h + h/2,0);
+		waveCanvas.lineTo(h + h/2,h);
+		*/
+		waveCanvas.moveTo(w,0);
+		waveCanvas.lineTo(w,h);
 		waveCanvas.stroke();
+
 		waveCanvas.strokeStyle = "black";
 		waveCanvas.beginPath();
-		waveCanvas.moveTo(0,buf[0]);
-		for (var i=1;i<512;i++) {
-			waveCanvas.lineTo(i,128+(buf[i]*128));
+		waveCanvas.moveTo(0, h/2 + buf[0]*h/2);
+		for (var i=0;i<w;i++) {
+			waveCanvas.lineTo(i, h/2 + buf[i]*h/2);
 		}
 		waveCanvas.stroke();
 	}

@@ -10,6 +10,7 @@ load_dotenv()
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = os.getenv("SECRET") or "secret"
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 socketio = SocketIO(app, cors_allowed_origins = "*")
 
 client = Client(os.getenv("OSC_IP"), os.getenv("OSC_PORT"))
@@ -70,9 +71,10 @@ def handle_disconnect():
 	pass
 
 if __name__ == '__main__':
+	print('Flask configs', app.config)
 	socketio.run(
 		app,
-		host = "127.0.0.1",
+		host = os.getenv("FLASK_HOST") or "127.0.0.1",
 		debug = False,
 		use_reloader = True,
 		certfile=os.getenv("CERT"),
