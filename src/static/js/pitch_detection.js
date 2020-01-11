@@ -16,7 +16,9 @@ var detectorElem,
 	gainElem,
 	detuneAmount,
 	prevNote,
-	levelMeter;
+	levelMeter,
+	thresholdValue,
+	volumeValue;
 
 var DRAW_CANVAS = true;
 var threshold = 0.00; // threshold of mic input level
@@ -49,6 +51,9 @@ window.onload = function() {
 	detuneElem = document.getElementById( "detune" );
 	gainElem = document.getElementById( "gain" );
 	detuneAmount = document.getElementById( "detune_amt" );
+	thresholdValue = document.getElementById("threshold-value");
+	volumeValue = document.getElementById("volume-value");
+
 
 	const toggle = document.querySelector('.toggle');
 	toggle.addEventListener('click', function() {
@@ -57,6 +62,13 @@ window.onload = function() {
 			toggleLiveInput();
 		});
 	});
+
+	const slider = document.querySelector('.slider')
+	thresholdValue.innerText = slider.value;
+	slider.oninput = function () {
+		threshold = slider.value;
+		thresholdValue.innerText = threshold;
+	}
 }
 
 function toggleLiveInput() {
@@ -222,6 +234,7 @@ function updatePitch() {
 	 	var note =  noteFromPitch( pitch );
 		noteElem.innerHTML = noteStrings[note%12];
 		var detune = centsOffFromPitch( pitch, note );
+		volumeValue.innerText = Number(levelMeter.volume.toFixed(2));
 		if (detune == 0 ) {
 			detuneAmount.innerHTML = "--";
 		} else {
@@ -283,7 +296,7 @@ function createAudioMeter(audioContext,clipLevel,averaging,clipLag) {
 
 function volumeAudioProcess( event ) {
 		var buf = event.inputBuffer.getChannelData(0);
-	    var bufLength = buf.length;
+    var bufLength = buf.length;
 		var sum = 0;
 	    var x;
 

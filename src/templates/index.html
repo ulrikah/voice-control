@@ -15,7 +15,11 @@
 				<circle cx="102" cy="102" r="75" stroke="black" stroke-width="1" fill="black" />
 				<circle cx="100" cy="100" r="75" stroke="black" stroke-width="1" fill="#E41D16" />
 			</svg>
-
+			<div class="item">
+				<input type="range" min="0" max="0.5" step="0.01" value="0.1" class="slider">
+				<p>Threshold value <span id="threshold-value"></span></p>
+				<p>Current volume <span id="volume-value"> 0.00 </span></p>
+			</div>
 			<canvas class="item" id="waveform" width="512" height="256"></canvas>
 			<div class="item" id="detector">
 				<div class="pitch"><span id="pitch">--</span>Hz</div>
